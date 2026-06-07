@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enterprise SaaS Starter Kit — Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+
+  :root {
+    --bg: #000000;
+    --bg-surface: #0a0a0a;
+    --bg-card: #000000;
+    --bg-card-hover: #0a0a0a;
+    --bg-code: #0a0a0a;
+    --border: #333333;
+    --border-accent: #333333;
+    --accent: #ffffff;
+    --accent-bright: #ededed;
+    --accent-dim: #111111;
+    --text: #ededed;
+    --text-muted: #a1a1aa;
+    --text-dim: #888888;
+    --text-code: #ededed;
+    --sidebar-w: 260px;
+    --navbar-h: 64px;
+    --radius: 6px;
+    --radius-sm: 4px;
+    --shadow: 0 4px 14px rgba(0,0,0,0.5);
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-display: 'Inter', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 15px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+  /* ── NAVBAR ── */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-h);
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+  }
+
+  .nav-left { display: flex; align-items: center; gap: 16px; }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: 1rem; color: var(--text);
+    text-decoration: none; letter-spacing: -0.02em;
+  }
+  .nav-logo svg { color: var(--text); width: 20px; height: 20px; }
+  .nav-logo .kit-label {
+    color: var(--text-dim);
+    font-weight: 400;
+    background: none;
+    -webkit-text-fill-color: currentcolor;
+  }
+
+  .nav-version {
+    font-size: 0.75rem; font-family: var(--font-mono);
+    background: #111; color: var(--text-muted);
+    border: 1px solid #333;
+    padding: 2px 8px; border-radius: 99px;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+
+  .nav-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: var(--radius-sm);
+    font-size: 0.875rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s ease; text-decoration: none;
+  }
+  .nav-btn-ghost {
+    background: transparent; border: 1px solid transparent;
+    color: var(--text-muted);
+  }
+  .nav-btn-ghost:hover { color: var(--text); background: #111; }
+  .nav-btn-primary {
+    background: var(--text); border: 1px solid var(--text);
+    color: var(--bg); font-weight: 500;
+  }
+  .nav-btn-primary:hover { background: var(--accent-bright); border-color: var(--accent-bright); }
+  .nav-btn svg { width: 16px; height: 16px; }
+
+  .hamburger {
+    display: none; flex-direction: column; gap: 4px; cursor: pointer;
+    background: none; border: none; padding: 6px;
+  }
+  .hamburger span {
+    display: block; width: 20px; height: 2px;
+    background: var(--text-muted); border-radius: 2px;
+    transition: all 0.2s ease;
+  }
+  .hamburger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  /* ── LAYOUT ── */
+  #layout {
+    display: flex;
+    margin-top: var(--navbar-h);
+    min-height: calc(100vh - var(--navbar-h));
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    position: fixed; top: var(--navbar-h); left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; overflow-x: hidden;
+    padding: 24px 0 40px;
+    z-index: 90;
+    transition: transform 0.25s ease;
+  }
+
+  .sidebar-section { margin-bottom: 4px; }
+
+  .sidebar-group-label {
+    display: block; padding: 6px 24px 4px;
+    font-size: 0.8125rem; font-weight: 600;
+    color: var(--text); margin-top: 16px;
+  }
+  .sidebar-group-label:first-child { margin-top: 0; }
+
+  .sidebar-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 24px; margin: 2px 0;
+    font-size: 0.875rem; color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    border-left: none;
+  }
+  .sidebar-link:hover { color: var(--text); }
+  .sidebar-link.active {
+    color: var(--text); font-weight: 500;
+    background: rgba(255,255,255,0.05);
+    border-left: none;
+  }
+  .sidebar-link .sl-icon { width: 16px; height: 16px; opacity: 0.8; display: flex; align-items: center; justify-content: center; }
+  .sidebar-link .sl-icon svg { width: 100%; height: 100%; }
+
+  /* ── MAIN CONTENT ── */
+  #content {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  #content-inner {
+    max-width: 1100px;
+    width: 100%;
+    padding: 64px 32px 120px;
+  }
+
+  /* ── SECTIONS ── */
+  .doc-section { margin-bottom: 64px; }
+
+  .section-label {
+    display: block; font-size: 0.875rem; font-weight: 500;
+    color: var(--text-dim); margin-bottom: 12px;
+  }
+  .section-label::before { display: none; }
+
+  h1 { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 24px; color: var(--text); }
+  h2 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin: 48px 0 20px; padding-top: 8px; color: var(--text); border-top: 1px solid var(--border); padding-top: 48px; }
+  h2:first-child, .doc-section > h2:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  h3 { font-size: 1.25rem; font-weight: 600; margin: 32px 0 16px; letter-spacing: -0.01em; color: var(--text); }
+  h4 { font-size: 1rem; font-weight: 600; margin: 24px 0 12px; color: var(--text); }
+
+  p { color: #a1a1aa; margin-bottom: 16px; line-height: 1.6; }
+  p:last-child { margin-bottom: 0; }
+
+  .lead {
+    font-size: 1.125rem; color: #a1a1aa; line-height: 1.6;
+    margin-bottom: 32px; font-weight: 400;
+  }
+
+  a { color: var(--text); text-decoration: underline; text-decoration-color: #333; text-underline-offset: 4px; }
+  a:hover { text-decoration-color: var(--text); }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  /* ── HERO CALLOUT ── */
+  .hero-callout {
+    margin-bottom: 40px; border: none; background: none; padding: 0; border-radius: 0;
+  }
+  .hero-callout::before { display: none; }
+  .hero-callout .hc-eyebrow {
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text-muted); margin-bottom: 12px;
+  }
+  .hero-callout h1 {
+    font-family: var(--font-display); font-size: 3rem;
+    margin-bottom: 16px; font-weight: 700; letter-spacing: -0.04em;
+  }
+  .hero-callout p { font-size: 1.125rem; color: #a1a1aa; margin-bottom: 0; line-height: 1.6; max-width: 600px; }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 99px;
+    font-size: 0.75rem; font-weight: 500;
+    border: 1px solid var(--border); background: var(--bg-surface); color: var(--text-muted);
+  }
+  .badge svg {
+    width: 14px; height: 14px; flex-shrink: 0;
+  }
+
+  /* ── TECH GRID ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .tech-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s ease;
+  }
+  .tech-card:hover {
+    border-color: #666;
+    background: var(--bg-surface);
+    box-shadow: none;
+    transform: none;
+  }
+  .tech-card .tc-icon { width: 24px; height: 24px; margin-bottom: 16px; display: flex; align-items: center; color: var(--text); }
+  .tech-card .tc-icon svg { width: 100%; height: 100%; }
+  .tech-card .tc-name { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .tech-card .tc-desc { font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; }
+  .tech-card .tc-tag {
+    display: inline-block; margin-top: 16px;
+    font-size: 0.75rem; font-family: var(--font-mono);
+    color: var(--text-dim); background: none; padding: 0;
+  }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 0; margin: 32px 0; }
+
+  .step {
+    display: flex; gap: 24px;
+    padding-bottom: 40px;
+    position: relative;
+  }
+  .step:last-child { padding-bottom: 0; }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute; left: 15px; top: 38px; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.875rem; font-weight: 500; font-family: var(--font-mono);
+    z-index: 1;
+  }
+
+  .step-body { flex: 1; min-width: 0; padding-top: 4px; }
+  .step-title { font-size: 1.125rem; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .step-desc { font-size: 0.9375rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap {
+    position: relative;
+    margin: 16px 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+  }
+
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 0.75rem; font-family: var(--font-mono); font-weight: 500;
+    color: var(--text-muted);
+  }
+  .copy-btn {
+    background: none; border: none; cursor: pointer;
+    padding: 4px 8px; border-radius: var(--radius-sm);
+    color: var(--text-muted); font-size: 0.75rem;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s; font-family: var(--font-body);
+  }
+  .copy-btn:hover { background: #222; color: var(--text); }
+  .copy-btn.copied { color: var(--text); }
+
+  pre {
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-family: var(--font-mono);
+    color: var(--text);
+  }
+  code { font-family: var(--font-mono); font-size: 0.875rem; }
+  p code, li code, .step-desc code, .prereq-table code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 2px 6px; border-radius: 4px;
+    font-size: 0.875rem;
+  }
+
+  /* Syntax highlight tokens */
+  .tok-k  { color: #ff7b72; }  /* keyword */
+  .tok-s  { color: #a5d6ff; }  /* string */
+  .tok-c  { color: #8b949e; }  /* comment */
+  .tok-f  { color: #d2a8ff; }  /* function */
+  .tok-n  { color: #c9d1d9; }  /* name/variable */
+  .tok-p  { color: #c9d1d9; }  /* punctuation */
+  .tok-m  { color: #79c0ff; }  /* number/flag */
+
+  /* ── FEATURE PILLS ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .feature-pill {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .feature-pill:hover {
+    border-color: #666; background: var(--bg-surface);
+  }
+  .feature-pill .fp-check {
+    flex-shrink: 0; margin-top: 2px;
+    width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text); background: none; border-radius: 0;
+  }
+  .feature-pill .fp-check svg { width: 100%; height: 100%; }
+  .feature-pill .fp-text { font-size: 0.875rem; color: var(--text); font-weight: 500; }
+
+  .feature-category { margin-bottom: 40px; }
+  .feature-category h4 {
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text-dim); margin-bottom: 16px; padding-bottom: 0; border-bottom: none;
+  }
+
+  /* ── DEPLOY CARDS ── */
+  .deploy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .deploy-card {
+    background: var(--bg-surface);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s ease;
+    text-decoration: none;
+    display: flex; flex-direction: column; align-items: flex-start;
+    text-align: left;
+    position: relative;
+  }
+  .deploy-card:hover {
+    border-color: rgba(255,255,255,0.25);
+    text-decoration: none; background: var(--bg-surface);
+    transform: none; box-shadow: none;
+  }
+  .deploy-card.recommended {
+    border-color: rgba(255,255,255,0.3);
+  }
+  .deploy-card.recommended:hover {
+    border-color: rgba(255,255,255,0.5);
+  }
+  .dc-badge {
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+    padding: 3px 8px; border-radius: 99px;
+    font-size: 0.65rem; font-weight: 500;
+  }
+  .deploy-card .dc-logo { width: 32px; height: 32px; margin-bottom: 16px; display: flex; align-items: center; color: var(--text); }
+  .deploy-card .dc-logo svg { width: 100%; height: 100%; }
+  .deploy-card .dc-name { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .deploy-card .dc-desc { font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; flex: 1; }
+  .deploy-card .dc-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text); background: none; border: none; padding: 0;
+    text-decoration: underline; text-decoration-color: #333; text-underline-offset: 4px;
+  }
+  .deploy-card:hover .dc-btn { text-decoration-color: var(--text); background: none; color: var(--text); }
+
+  /* ── CONFIG SECTIONS ── */
+  .config-block {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .config-block::before { display: none; }
+  .config-block h3 { margin-top: 0; font-size: 1.125rem; margin-bottom: 16px; }
+  .config-list { list-style: none; padding: 0; margin: 0; }
+  .config-list li {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.9375rem; color: var(--text-muted); line-height: 1.5;
+  }
+  .config-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .config-list li::before { content: ''; margin-top: 8px; width: 4px; height: 4px; border-radius: 50%; background: #555; flex-shrink: 0; }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    display: flex; gap: 16px;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    margin: 24px 0;
+    font-size: 0.9375rem; line-height: 1.6;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+  }
+  .callout-info { border-color: #333; color: var(--text-muted); }
+  .callout-tip { border-color: #333; color: var(--text-muted); }
+  .callout-icon { flex-shrink: 0; width: 20px; height: 20px; color: var(--text); display: flex; align-items: center; }
+  .callout-icon svg { width: 100%; height: 100%; }
+
+  /* ── LICENSE / CONTRIB ── */
+  .simple-list { list-style: none; padding: 0; margin: 16px 0; }
+  .simple-list li {
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.9375rem; color: var(--text-muted);
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .simple-list li:last-child { border-bottom: none; }
+  .simple-list li::before { content: ''; margin-top: 8px; width: 4px; height: 4px; border-radius: 50%; background: #555; flex-shrink: 0; }
+
+  /* ── DIVIDER HEADING ── */
+  .dh {
+    display: flex; align-items: center; gap: 16px;
+    margin: 48px 0 24px;
+  }
+  .dh-line { flex: 1; height: 1px; background: var(--border); }
+  .dh-text {
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text-dim); white-space: nowrap;
+  }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0 0;
+    margin-top: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .doc-footer a { color: var(--text-muted); font-size: 0.875rem; text-decoration: none; }
+  .doc-footer a:hover { color: var(--text); }
+  .doc-footer .df-copy { font-size: 0.875rem; color: var(--text-dim); }
+
+  /* ── PREREQ TABLE ── */
+  .prereq-table {
+    width: 100%; border-collapse: collapse; margin: 24px 0;
+    font-size: 0.9375rem;
+  }
+  .prereq-table th, .prereq-table td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .prereq-table th {
+    color: var(--text-muted); font-size: 0.875rem; font-weight: 500; background: none;
+  }
+  .prereq-table td { color: var(--text-muted); }
+  .prereq-table td:first-child { color: var(--text); font-weight: 500; }
+
+  /* ── MOBILE ── */
+  #sidebar-overlay {
+    display: none; position: fixed; inset: 0; z-index: 85;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+  }
+
+  @media (max-width: 900px) {
+    .hamburger { display: flex; }
+    #sidebar {
+      transform: translateX(-100%);
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar-overlay.open { display: block; }
+    #content { margin-left: 0; }
+    #content-inner { padding: 40px 24px 80px; }
+    .tech-grid { grid-template-columns: 1fr 1fr; }
+    .deploy-grid { grid-template-columns: 1fr; }
+    .feature-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 2.5rem; }
+    .nav-version { display: none; }
+  }
+
+  @media (max-width: 560px) {
+    .tech-grid { grid-template-columns: 1fr; }
+    #content-inner { padding: 32px 16px 80px; }
+    .hero-callout h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-left">
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="#introduction" class="nav-logo">
+      <span class="star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+      <span>SaaS<span class="kit-label"> Starter Kit</span></span>
+    </a>
+    <span class="nav-version">Enterprise</span>
+  </div>
+  <div class="nav-right">
+    <a class="nav-btn nav-btn-ghost" href="https://github.com/Alisha-21-cloud/saas-starter-kit" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+      GitHub
+    </a>
+    <a class="nav-btn nav-btn-primary" href="#deployment">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg> Deploy Now
+    </a>
+  </div>
+</nav>
+
+<!-- SIDEBAR OVERLAY -->
+<div id="sidebar-overlay"></div>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <nav>
+      <span class="sidebar-group-label">Overview</span>
+      <a class="sidebar-link active" href="#introduction" data-section="introduction">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span> Introduction
+      </a>
+
+      <span class="sidebar-group-label">Getting Started</span>
+      <a class="sidebar-link" href="#prerequisites" data-section="prerequisites">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span> Prerequisites
+      </a>
+      <a class="sidebar-link" href="#installation" data-section="installation">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span> Installation
+      </a>
+      <a class="sidebar-link" href="#running" data-section="running">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg></span> Running the App
+      </a>
+
+      <span class="sidebar-group-label">Tech Stack</span>
+      <a class="sidebar-link" href="#built-with" data-section="built-with">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></span> Built With
+      </a>
+
+      <span class="sidebar-group-label">Configuration</span>
+      <a class="sidebar-link" href="#auth-config" data-section="auth-config">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span> Authentication
+      </a>
+      <a class="sidebar-link" href="#webhooks-config" data-section="webhooks-config">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span> Webhooks
+      </a>
+      <a class="sidebar-link" href="#payments-config" data-section="payments-config">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span> Payments
+      </a>
+      <a class="sidebar-link" href="#recaptcha-config" data-section="recaptcha-config">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg></span> Recaptcha
+      </a>
+      <a class="sidebar-link" href="#sentry-config" data-section="sentry-config">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="6" width="8" height="14" rx="4"></rect><path d="m19 7-3 2"></path><path d="m5 7 3 2"></path><path d="m19 19-3-2"></path><path d="m5 19 3-2"></path><path d="M20 13h-4"></path><path d="M4 13h4"></path><path d="m10 4 1 2"></path><path d="m14 4-1 2"></path></svg></span> Sentry
+      </a>
+
+      <span class="sidebar-group-label">Features</span>
+      <a class="sidebar-link" href="#features" data-section="features">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg></span> Full Feature List
+      </a>
+
+      <span class="sidebar-group-label">Deploy & Contribute</span>
+      <a class="sidebar-link" href="#deployment" data-section="deployment">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg></span> Deployment
+      </a>
+      <a class="sidebar-link" href="#contributing" data-section="contributing">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span> Contributing
+      </a>
+      <a class="sidebar-link" href="#license" data-section="license">
+        <span class="sl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span> License
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="content">
+    <div id="content-inner">
+
+      <!-- INTRODUCTION -->
+      <section class="doc-section" id="introduction">
+        <div class="hero-callout">
+          <div class="hc-eyebrow">Open Source · Next.js · Enterprise Ready</div>
+          <h1>Enterprise SaaS Starter Kit</h1>
+          <p>The open-source Next.js boilerplate that handles everything your SaaS app needs out of the box — authentication, teams, billing, audit logs, and more — so you can focus on what makes your product unique.</p>
+          <div class="badge-row">
+            <span class="badge badge-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Open Source</span>
+            <span class="badge badge-purple">Next.js 14</span>
+            <span class="badge badge-green">TypeScript</span>
+            <span class="badge badge-orange">Apache 2.0</span>
+          </div>
+        </div>
+
+        <p class="lead">Saves you months of development by starting you off with all the features that are the same in every SaaS product — multi-tenancy, auth, payments, webhooks, audit logs — so you can build what actually matters.</p>
+
+        <div class="callout callout-info">
+          <span class="callout-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"></line><line x1="10" y1="22" x2="14" y2="22"></line><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path></svg></span>
+          <div>Please star <svg style="width: 1.2em; height: 1.2em; vertical-align: middle; display: inline-block; margin: 0 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> the repo if you want to help continue developing and improving the SaaS Starter Kit! It motivates us to keep shipping.</div>
+        </div>
+      </section>
+
+      <!-- PREREQUISITES -->
+      <section class="doc-section" id="prerequisites">
+        <div class="section-label">Getting Started</div>
+        <h2>Prerequisites</h2>
+        <p>Before you begin, make sure you have the following installed on your development machine.</p>
+
+        <table class="prereq-table">
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Version</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Node.js</td>
+              <td><code>&gt;= 18.x</code></td>
+              <td>LTS recommended</td>
+            </tr>
+            <tr>
+              <td>PostgreSQL</td>
+              <td>Latest stable</td>
+              <td>Or use the included Docker Compose</td>
+            </tr>
+            <tr>
+              <td>NPM</td>
+              <td>Bundled with Node.js</td>
+              <td>Used for package management</td>
+            </tr>
+            <tr>
+              <td>Docker Compose</td>
+              <td>Latest stable</td>
+              <td>Optional — for local Postgres instance</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- INSTALLATION -->
+      <section class="doc-section" id="installation">
+        <div class="section-label">Getting Started</div>
+        <h2>Installation</h2>
+        <p>Follow these steps to get a local copy of the project up and running.</p>
+
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-num">01</div>
+            <div class="step-body">
+              <div class="step-title">Fork and clone the repository</div>
+              <div class="step-desc">Start by forking the repo on GitHub, then clone your fork locally.</div>
+              <div class="code-wrap">
+                <div class="code-header">
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+                </div>
+                <pre><code>git clone https://github.com/&lt;your_github_username&gt;/saas-starter-kit.git</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">02</div>
+            <div class="step-body">
+              <div class="step-title">Go to the project folder</div>
+              <div class="code-wrap">
+                <div class="code-header">
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+                </div>
+                <pre><code>cd saas-starter-kit</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">03</div>
+            <div class="step-body">
+              <div class="step-title">Install dependencies</div>
+              <div class="code-wrap">
+                <div class="code-header">
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+                </div>
+                <pre><code>npm install</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">04</div>
+            <div class="step-body">
+              <div class="step-title">Set up your .env file</div>
+              <div class="step-desc">Duplicate the example environment file and fill in your values.</div>
+              <div class="code-wrap">
+                <div class="code-header">
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+                </div>
+                <pre><code>cp .env.example .env</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">05</div>
+            <div class="step-body">
+              <div class="step-title">Create a database <span style="font-weight:400;color:var(--text-dim)">(Optional — Docker)</span></div>
+              <div class="step-desc">We provide a <code>docker-compose.yml</code> with a PostgreSQL container to make setup easier.</div>
+              <div class="code-wrap">
+                <div class="code-header">
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+                </div>
+                <pre><code>docker-compose up -d</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">06</div>
+            <div class="step-body">
+              <div class="step-title">Set up database schema</div>
+              <div class="step-desc">Push the Prisma schema to your database.</div>
+              <div class="code-wrap">
+                <div class="code-header">
+                  <span class="code-lang">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+                </div>
+                <pre><code>npx prisma db push</code></pre>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- RUNNING -->
+      <section class="doc-section" id="running">
+        <div class="section-label">Getting Started</div>
+        <h2>Running the App</h2>
+
+        <h3>Start the Development Server</h3>
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code>npm run dev</code></pre>
+        </div>
+
+        <h3>Open Prisma Studio</h3>
+        <p>Prisma Studio is a visual editor for the data in your database. A great way to inspect and manage records during development.</p>
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code>npx prisma studio</code></pre>
+        </div>
+
+        <h3>Running E2E Tests</h3>
+        <p>The project uses <a href="https://playwright.dev" target="_blank">Playwright</a> to execute end-to-end tests. All tests live in the <code>/tests</code> folder. The HTML test report is generated inside the <code>report</code> folder. Supported browsers: <strong>Chromium</strong> and <strong>Firefox</strong>.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code><span class="tok-c"># Install Playwright browser binaries</span>
+npm run playwright:update
+
+<span class="tok-c"># Run the E2E test suite</span>
+npm run test:e2e</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <span class="callout-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"></line><line x1="10" y1="22" x2="14" y2="22"></line><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path></svg></span>
+          <div>Update <code>playwright.config.ts</code> in the project root to customize the Playwright configuration — change base URL, timeout, browser targets, and more.</div>
+        </div>
+      </section>
+
+      <!-- BUILT WITH -->
+      <section class="doc-section" id="built-with">
+        <div class="section-label">Tech Stack</div>
+        <h2>Built With</h2>
+        <p>The Starter Kit is built on a carefully chosen set of modern, production-grade technologies.</p>
+
+        <div class="tech-grid">
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 22h20L12 2z"></path></svg></span>
+            <div class="tc-name">Next.js</div>
+            <div class="tc-desc">React framework with SSR, SSG, and the App Router. The primary UI foundation.</div>
+            <span class="tc-tag">next.config.js</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="5.5" r="2.5"></circle><circle cx="18.5" cy="10.5" r="2.5"></circle><circle cx="8.5" cy="10.5" r="2.5"></circle><path d="M18.83 14.83a4 4 0 0 1-5.66 0"></path><path d="M12 22a10 10 0 1 0-10-10"></path></svg></span>
+            <div class="tc-name">Tailwind CSS</div>
+            <div class="tc-desc">Utility-first CSS framework for rapidly building custom user interfaces.</div>
+            <span class="tc-tag">postcss.config.js</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"></path><path d="M9 12v.01"></path><path d="M15 12v.01"></path></svg></span>
+            <div class="tc-name">PostgreSQL</div>
+            <div class="tc-desc">Powerful open-source relational database for all application data.</div>
+            <span class="tc-tag">via Prisma</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(60 12 12)"></ellipse><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(120 12 12)"></ellipse><ellipse cx="12" cy="12" rx="11" ry="4"></ellipse></svg></span>
+            <div class="tc-name">React</div>
+            <div class="tc-desc">JavaScript library for building interactive UI components.</div>
+            <span class="tc-tag">components/</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 12 12 22 22 12 12 2"></polygon></svg></span>
+            <div class="tc-name">Prisma</div>
+            <div class="tc-desc">Open-source ORM that simplifies database queries and migrations.</div>
+            <span class="tc-tag">prisma/</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span>
+            <div class="tc-name">TypeScript</div>
+            <div class="tc-desc">Typed superset of JavaScript for more robust and maintainable code.</div>
+            <span class="tc-tag">next-env.d.ts</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg></span>
+            <div class="tc-name">NextAuth.js</div>
+            <div class="tc-desc">Complete authentication solution: email magic link, OAuth, SSO.</div>
+            <span class="tc-tag">pages/api/auth/</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg></span>
+            <div class="tc-name">SAML Jackson</div>
+            <div class="tc-desc">Handles SAML SSO and Directory Sync (SCIM) for enterprise customers.</div>
+            <span class="tc-tag">boxyhq/jackson</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
+            <div class="tc-name">Svix</div>
+            <div class="tc-desc">Webhook orchestration — emits events on user/team CRUD operations.</div>
+            <span class="tc-tag">svix.com</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg></span>
+            <div class="tc-name">Retraced</div>
+            <div class="tc-desc">Audit log service that tracks who did what and when in your app.</div>
+            <span class="tc-tag">retracedhq</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span>
+            <div class="tc-name">Stripe</div>
+            <div class="tc-desc">Industry-leading payments processing for subscriptions and billing.</div>
+            <span class="tc-tag">stripe.com</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></span>
+            <div class="tc-name">Playwright</div>
+            <div class="tc-desc">Node.js browser automation for comprehensive end-to-end tests.</div>
+            <span class="tc-tag">tests/</span>
+          </div>
+          <div class="tech-card">
+            <span class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></span>
+            <div class="tc-name">Docker</div>
+            <div class="tc-desc">Containerization with docker-compose for consistent local dev environments.</div>
+            <span class="tc-tag">docker-compose.yml</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- AUTH CONFIG -->
+      <section class="doc-section" id="auth-config">
+        <div class="section-label">Feature Configuration</div>
+        <h2>Authentication</h2>
+        <p>Authentication is powered by <a href="https://next-auth.js.org" target="_blank">NextAuth.js</a>. The default login options are email (magic link) and GitHub OAuth. Configuration lives in <code>pages/api/auth/[...nextauth].ts</code>.</p>
+
+        <div class="config-block" data-icon="<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg>">
+          <h3>NextAuth.js Setup</h3>
+          <ul class="config-list">
+            <li>Generate a secret key and add it to <code>.env</code> as <code>NEXTAUTH_SECRET</code></li>
+            <li>Configure <code>SMTP_*</code> variables for magic link login emails (AWS SES, SendGrid, or Resend)</li>
+            <li>For GitHub OAuth: create an OAuth App in the GitHub developer console, add <code>GITHUB_CLIENT_ID</code> and <code>GITHUB_CLIENT_SECRET</code></li>
+            <li>For Google OAuth: create an OAuth App in the Google Cloud Console, add <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code></li>
+          </ul>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code><span class="tok-c"># Generate a secure secret for NextAuth.js</span>
+openssl rand -base64 32</code></pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code><span class="tok-n">NEXTAUTH_SECRET</span><span class="tok-p">=</span><span class="tok-s">your-generated-secret</span>
+<span class="tok-n">NEXTAUTH_URL</span><span class="tok-p">=</span><span class="tok-s">http://localhost:3000</span>
+
+<span class="tok-c"># SMTP for magic link emails</span>
+<span class="tok-n">SMTP_HOST</span><span class="tok-p">=</span><span class="tok-s">smtp.example.com</span>
+<span class="tok-n">SMTP_PORT</span><span class="tok-p">=</span><span class="tok-s">587</span>
+<span class="tok-n">SMTP_USER</span><span class="tok-p">=</span><span class="tok-s">user@example.com</span>
+<span class="tok-n">SMTP_PASSWORD</span><span class="tok-p">=</span><span class="tok-s">your-password</span>
+<span class="tok-n">SMTP_FROM</span><span class="tok-p">=</span><span class="tok-s">noreply@yourapp.com</span>
+
+<span class="tok-c"># GitHub OAuth</span>
+<span class="tok-n">GITHUB_CLIENT_ID</span><span class="tok-p">=</span><span class="tok-s">your-github-client-id</span>
+<span class="tok-n">GITHUB_CLIENT_SECRET</span><span class="tok-p">=</span><span class="tok-s">your-github-client-secret</span>
+
+<span class="tok-c"># Google OAuth</span>
+<span class="tok-n">GOOGLE_CLIENT_ID</span><span class="tok-p">=</span><span class="tok-s">your-google-client-id</span>
+<span class="tok-n">GOOGLE_CLIENT_SECRET</span><span class="tok-p">=</span><span class="tok-s">your-google-client-secret</span></code></pre>
+        </div>
+      </section>
+
+      <!-- WEBHOOKS CONFIG -->
+      <section class="doc-section" id="webhooks-config">
+        <div class="section-label">Feature Configuration</div>
+        <h2>Svix Webhooks</h2>
+        <p>Webhooks are orchestrated by <a href="https://www.svix.com/" target="_blank">Svix</a>. Events are emitted on user and team CRUD operations, which can be consumed by your own services or third-party integrations.</p>
+
+        <div class="config-block" data-icon="<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>">
+          <h3>Svix Setup</h3>
+          <ul class="config-list">
+            <li>Create an account at <a href="https://www.svix.com/" target="_blank">svix.com</a></li>
+            <li>Copy your authentication token from the Svix dashboard</li>
+            <li>Add <code>SVIX_API_KEY</code> to your <code>.env</code> file</li>
+          </ul>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code><span class="tok-n">SVIX_API_KEY</span><span class="tok-p">=</span><span class="tok-s">your-svix-api-key</span></code></pre>
+        </div>
+      </section>
+
+      <!-- PAYMENTS CONFIG -->
+      <section class="doc-section" id="payments-config">
+        <div class="section-label">Feature Configuration</div>
+        <h2>Stripe Payments</h2>
+        <p>Payments are handled by <a href="https://stripe.com" target="_blank">Stripe</a>, including subscription management and billing. The webhook endpoint is at <code>/api/webhooks/stripe</code>.</p>
+
+        <div class="config-block" data-icon="<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>">
+          <h3>Stripe Setup</h3>
+          <ul class="config-list">
+            <li>Create a Stripe account at <a href="https://stripe.com" target="_blank">stripe.com</a></li>
+            <li>Copy the API secret key from the <a href="https://dashboard.stripe.com/apikeys" target="_blank">Stripe Dashboard</a> → add as <code>STRIPE_SECRET_KEY</code></li>
+            <li>Create a webhook endpoint in the Stripe Dashboard pointing to <code>your-app.com/api/webhooks/stripe</code></li>
+            <li>For local development, use the Stripe CLI forwarder to forward events to localhost</li>
+            <li>Copy the webhook signing secret → add as <code>STRIPE_WEBHOOK_SECRET</code></li>
+          </ul>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code><span class="tok-n">STRIPE_SECRET_KEY</span><span class="tok-p">=</span><span class="tok-s">sk_live_...</span>
+<span class="tok-n">STRIPE_WEBHOOK_SECRET</span><span class="tok-p">=</span><span class="tok-s">whsec_...</span></code></pre>
+        </div>
+      </section>
+
+      <!-- RECAPTCHA CONFIG -->
+      <section class="doc-section" id="recaptcha-config">
+        <div class="section-label">Feature Configuration</div>
+        <h2>Recaptcha</h2>
+        <p>Protect your forms and API endpoints with Google reCAPTCHA Enterprise.</p>
+
+        <div class="config-block" data-icon="<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>">
+          <h3>reCAPTCHA Setup</h3>
+          <ul class="config-list">
+            <li>Create an account at <a href="https://www.google.com/recaptcha/admin/enterprise" target="_blank">Google reCAPTCHA</a> (creates a Google Cloud account if needed)</li>
+            <li>From the <a href="https://console.cloud.google.com/security/recaptcha" target="_blank">Google Cloud Console</a>, copy the reCAPTCHA ID → add as <code>RECAPTCHA_SITE_KEY</code></li>
+            <li>Click Key Details → Integration → Use legacy key to get the secret key → add as <code>RECAPTCHA_SECRET_KEY</code></li>
+          </ul>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code><span class="tok-n">RECAPTCHA_SITE_KEY</span><span class="tok-p">=</span><span class="tok-s">your-recaptcha-site-key</span>
+<span class="tok-n">RECAPTCHA_SECRET_KEY</span><span class="tok-p">=</span><span class="tok-s">your-recaptcha-secret-key</span></code></pre>
+        </div>
+      </section>
+
+      <!-- SENTRY CONFIG -->
+      <section class="doc-section" id="sentry-config">
+        <div class="section-label">Feature Configuration</div>
+        <h2>Sentry Error Tracking</h2>
+        <p>Monitor errors and performance issues in production with <a href="https://sentry.io" target="_blank">Sentry</a>.</p>
+
+        <div class="config-block" data-icon="<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="6" width="8" height="14" rx="4"></rect><path d="m19 7-3 2"></path><path d="m5 7 3 2"></path><path d="m19 19-3-2"></path><path d="m5 19 3-2"></path><path d="M20 13h-4"></path><path d="M4 13h4"></path><path d="m10 4 1 2"></path><path d="m14 4-1 2"></path></svg>">
+          <h3>Sentry Setup</h3>
+          <ul class="config-list">
+            <li>Create an account at <a href="https://sentry.io" target="_blank">sentry.io</a>, skip onboarding, and create a new <strong>Next.js</strong> project</li>
+            <li>At the bottom of the setup page, copy the DSN string → add as <code>SENTRY_DSN</code></li>
+            <li>Other Sentry environment variables are optional</li>
+          </ul>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy</button>
+          </div>
+          <pre><code><span class="tok-n">SENTRY_DSN</span><span class="tok-p">=</span><span class="tok-s">https://xxxx@o0.ingest.sentry.io/0</span></code></pre>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+      <section class="doc-section" id="features">
+        <div class="section-label">Features</div>
+        <h2>Full Feature List</h2>
+        <p>Everything you need to ship a production-ready SaaS product, already built and configured.</p>
+
+        <div class="feature-category">
+          <h4>Authentication &amp; Identity</h4>
+          <div class="feature-grid">
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Create account</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Sign in with Email &amp; Password</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Sign in with Magic Link</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Sign in with SAML SSO</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Sign in with Google OAuth</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Sign in with GitHub OAuth</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Update account settings</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Avatar Upload</div></div>
+          </div>
+        </div>
+
+        <div class="feature-category">
+          <h4>Teams &amp; Collaboration</h4>
+          <div class="feature-grid">
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Create team</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Delete team</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Invite users to the team</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Manage team members</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Update team settings</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Roles and Permissions</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Update member roles</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Directory Sync (SCIM)</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Directory Sync Events</div></div>
+          </div>
+        </div>
+
+        <div class="feature-category">
+          <h4>Platform &amp; Integrations</h4>
+          <div class="feature-grid">
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Webhooks &amp; Events</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Audit Logs</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Payments (Stripe)</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Email Notifications</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Internationalization (i18n)</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Security Headers</div></div>
+          </div>
+        </div>
+
+        <div class="feature-category">
+          <h4>Developer Experience</h4>
+          <div class="feature-grid">
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">E2E Tests (Playwright)</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Docker Compose support</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Prisma Studio</div></div>
+            <div class="feature-pill"><div class="fp-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="fp-text">Dark mode</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEPLOYMENT -->
+      <section class="doc-section" id="deployment">
+        <div class="section-label">Deploy &amp; Ship</div>
+        <h2>Deployment</h2>
+        <p>Deploy the SaaS Starter Kit with a single click to your preferred cloud platform. Each platform handles infrastructure, scaling, and deployments automatically.</p>
+
+        <div class="deploy-grid">
+          <a class="deploy-card recommended" href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAlisha-21-cloud%2Fsaas-starter-kit&env=NEXTAUTH_SECRET,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASSWORD,SMTP_FROM,DATABASE_URL,APP_URL" target="_blank" rel="noopener">
+            <span class="dc-badge">Recommended for Next.js</span>
+            <span class="dc-logo"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg></span>
+            <div class="dc-name">Vercel</div>
+            <div class="dc-desc">The native platform for Next.js. Zero-config deployments, edge network, and serverless functions.</div>
+            <span class="dc-btn">Deploy to Vercel →</span>
+          </a>
+
+          <a class="deploy-card" href="https://heroku.com/deploy" target="_blank" rel="noopener">
+            <span class="dc-logo"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.61 0H3.39C2.189 0 1.23.96 1.23 2.16v19.681c0 1.198.959 2.159 2.16 2.159h17.22c1.2 0 2.159-.961 2.159-2.159V2.16C22.77.96 21.811 0 20.61 0zm.96 21.841c0 .539-.421.96-.96.96H3.39c-.54 0-.96-.421-.96-.96V2.16c0-.54.42-.961.96-.961h17.22c.539 0 .96.421.96.961v19.681zM6.63 20.399L9.33 18l-2.7-2.4v4.799zm9.72-9.719c-.479-.48-1.379-1.08-2.879-1.08-1.621 0-3.301.421-4.5.84V3.6h-2.4v10.38l1.68-.78s2.76-1.26 5.16-1.26c1.2 0 1.5.66 1.5 1.26v7.2h2.4v-7.2c.059-.179.059-1.501-.961-2.52zM13.17 7.5h2.4c1.08-1.26 1.62-2.521 1.8-3.9h-2.399c-.241 1.379-.841 2.64-1.801 3.9z"/></svg></span>
+            <div class="dc-name">Heroku</div>
+            <div class="dc-desc">Platform-as-a-service with managed PostgreSQL add-ons and a developer-friendly dashboard.</div>
+            <span class="dc-btn">Deploy to Heroku →</span>
+          </a>
+
+          <a class="deploy-card" href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/Alisha-21-cloud/saas-starter-kit/tree/main" target="_blank" rel="noopener">
+            <span class="dc-logo"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.04 0C5.408-.02.005 5.37.005 11.992h4.638c0-4.923 4.882-8.731 10.064-6.855a6.95 6.95 0 014.147 4.148c1.889 5.177-1.924 10.055-6.84 10.064v-4.61H7.391v4.623h4.61V24c7.86 0 13.967-7.588 11.397-15.83-1.115-3.59-3.985-6.446-7.575-7.575A12.8 12.8 0 0012.039 0zM7.39 19.362H3.828v3.564H7.39zm-3.563 0v-2.978H.85v2.978z"/></svg></span>
+            <div class="dc-name">DigitalOcean</div>
+            <div class="dc-desc">App Platform for containerized apps with built-in databases, managed Kubernetes, and more.</div>
+            <span class="dc-btn">Deploy to DigitalOcean →</span>
+          </a>
+        </div>
+
+        <div class="callout callout-info">
+          <span class="callout-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>
+          <div>When deploying to Vercel, you'll be prompted to set the required environment variables directly in the deployment wizard. Make sure to have your <code>DATABASE_URL</code> and <code>NEXTAUTH_SECRET</code> ready.</div>
+        </div>
+      </section>
+
+      <!-- CONTRIBUTING -->
+      <section class="doc-section" id="contributing">
+        <div class="section-label">Community</div>
+        <h2>Contributing</h2>
+        <p>Contributions make the open-source community a fantastic place to learn, inspire, and create. Any contributions you make are greatly appreciated!</p>
+
+        <h3>Writing Good Bug Reports</h3>
+        <p>Please try to create bug reports that are:</p>
+        <ul class="simple-list">
+          <li><strong>Reproducible</strong> — include steps to reproduce the problem consistently</li>
+          <li><strong>Specific</strong> — include as much detail as possible: version, environment, OS</li>
+          <li><strong>Unique</strong> — do not duplicate existing open issues; search first</li>
+          <li><strong>Scoped</strong> — one bug per report; don't bundle multiple issues together</li>
+        </ul>
+
+        <div style="margin-top: 24px;">
+          <a class="nav-btn nav-btn-ghost" href="https://github.com/Alisha-21-cloud/saas-starter-kit/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" style="display:inline-flex; font-size:0.85rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Read the Contributing Guide →
+          </a>
+        </div>
+      </section>
+
+      <!-- LICENSE -->
+      <section class="doc-section" id="license">
+        <div class="section-label">Legal</div>
+        <h2>License</h2>
+        <p>This project is licensed under the <strong>Apache 2.0 License</strong>. You are free to use, modify, and distribute this software, including for commercial purposes, under the terms of the license.</p>
+
+        <div class="config-block" data-icon="<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"></path><rect x="4" y="16" width="16" height="5" rx="1"></rect><path d="M12 8L4.5 5.5l1.5-3"></path><path d="M12 8l7.5-2.5-1.5-3"></path></svg>">
+          <h3>Apache License 2.0</h3>
+          <ul class="config-list">
+            <li>Free for personal and commercial use</li>
+            <li>Modifications allowed; must include notice of changes</li>
+            <li>Can be distributed under different terms if source is attributed</li>
+            <li>No warranty provided — use at your own risk</li>
+          </ul>
+        </div>
+
+        <p style="margin-top: 16px;">
+          <a href="https://github.com/Alisha-21-cloud/saas-starter-kit/blob/main/LICENSE" target="_blank" rel="noopener">View full license text →</a>
+        </p>
+      </section>
+
+      <!-- FOOTER -->
+      <div class="doc-footer">
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+          <a href="https://github.com/Alisha-21-cloud/saas-starter-kit" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/Alisha-21-cloud/saas-starter-kit/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a>
+          <a href="https://github.com/Alisha-21-cloud/saas-starter-kit/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+          <a href="https://x.com/_Alisha_001" target="_blank" rel="noopener">Twitter / X</a>
+          <a href="https://www.linkedin.com/in/syed-ahmad-alisha/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+        <div class="df-copy">Apache 2.0 · Enterprise SaaS Starter Kit</div>
+      </div>
+
+    </div><!-- /content-inner -->
+  </main>
+</div><!-- /layout -->
+
+<script>
+  // ── COPY TO CLIPBOARD ──
+  function copyCode(btn) {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // ── HAMBURGER / SIDEBAR TOGGLE ──
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+
+  function toggleSidebar() {
+    const open = sidebar.classList.toggle('open');
+    overlay.classList.toggle('open', open);
+    hamburger.classList.toggle('active', open);
+  }
+
+  hamburger.addEventListener('click', toggleSidebar);
+  overlay.addEventListener('click', toggleSidebar);
+
+  // Close sidebar on link click (mobile)
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        hamburger.classList.remove('active');
+      }
+    });
+  });
+
+  // ── ACTIVE SIDEBAR LINK (IntersectionObserver) ──
+  const sections = document.querySelectorAll('.doc-section');
+  const sidebarLinks = document.querySelectorAll('.sidebar-link[data-section]');
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '-20% 0px -70% 0px',
+    threshold: 0
+  };
+
+  let activeSection = null;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        activeSection = entry.target.id;
+        updateActiveLink();
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach(section => observer.observe(section));
+
+  function updateActiveLink() {
+    sidebarLinks.forEach(link => {
+      const section = link.getAttribute('data-section');
+      link.classList.toggle('active', section === activeSection);
+    });
+  }
+
+  // ── SMOOTH SCROLL for anchor clicks ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) {
+        e.preventDefault();
+        const offset = 72; // navbar height + breathing room
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
