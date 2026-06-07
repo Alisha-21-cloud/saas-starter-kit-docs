@@ -521,7 +521,8 @@
     background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
+    /* Sidebar & Layout */
     .hamburger { display: flex; }
     #sidebar {
       transform: translateX(-100%);
@@ -529,18 +530,50 @@
     #sidebar.open { transform: translateX(0); }
     #sidebar-overlay.open { display: block; }
     #content { margin-left: 0; }
-    #content-inner { padding: 40px 24px 80px; }
+    #content-inner { padding: 32px 20px 80px; }
+    
+    /* Top Navbar */
+    .nav-version { display: none; }
+    .nav-right { gap: 8px; }
+    .nav-btn { padding: 6px 10px; font-size: 0.75rem; gap: 4px; }
+    .nav-btn svg { width: 14px; height: 14px; }
+    
+    /* Content Grids */
     .tech-grid { grid-template-columns: 1fr 1fr; }
     .deploy-grid { grid-template-columns: 1fr; }
     .feature-grid { grid-template-columns: 1fr; }
-    h1 { font-size: 2.5rem; }
-    .nav-version { display: none; }
+    
+    /* Tables */
+    .prereq-table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-right: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+    .prereq-table th, .prereq-table td { white-space: nowrap; }
+    
+    /* Badges */
+    .badge-row { flex-wrap: wrap; }
+    .badge { white-space: nowrap; }
+
+    /* Typography adjustments for smaller screens */
+    h1 { font-size: 2.25rem; }
+    .hero-callout h1 { font-size: 2rem; }
   }
 
   @media (max-width: 560px) {
+    /* Extreme mobile compression */
     .tech-grid { grid-template-columns: 1fr; }
-    #content-inner { padding: 32px 16px 80px; }
-    .hero-callout h1 { font-size: 2rem; }
+    #content-inner { padding: 24px 16px 80px; }
+    
+    .nav-left { gap: 10px; }
+    .nav-logo .kit-label { display: none; } /* Drop "Starter Kit" label to save navbar space */
+    .nav-btn { padding: 6px 8px; font-size: 0.7rem; }
+    
+    h1 { font-size: 1.8rem; }
+    .hero-callout h1 { font-size: 1.75rem; }
   }
 </style>
 </head>
